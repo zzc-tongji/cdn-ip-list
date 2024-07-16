@@ -1,0 +1,39 @@
+name: Generate
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+jobs:
+  generate:
+    name: Generate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Cache Dependency
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: ./node_modules
+          key: node_modules.${{ hashFiles('./yarn.lock') }}.${{ runner.os }}.${{ runner.arch }}
+      - name: Install Dependency
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install
+      - name: Generate CDN IP List
+        run: |
+          yarn start
+      - name: Upload Nginx Config to Amazon S3
+        uses: shallwefootball/s3-upload-action@master
+        with:
+          aws_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+          aws_bucket: ${{ vars.S3_BUCKET }}
+          source_dir: ./cdn_ip_list.nginx.conf
+          destination_dir: ${{ vars.S3_PATH }}/cdn_ip_list.nginx.conf
