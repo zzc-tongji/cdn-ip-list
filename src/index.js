@@ -87,8 +87,10 @@ const main = async () => {
     lineList.push('');
     const nginxConf = lineList.join('\n');
     // write file
-    const nginx = path.normalize(`${__dirname}${path.sep}..${path.sep}cdn_ip_list.nginx.conf`);
-    fs.writeFileSync(nginx, nginxConf);
+    const output = path.normalize(`${__dirname}${path.sep}..${path.sep}output`);
+    fs.mkdirSync(output, { recursive: true });
+    const nginx = `${output}${path.sep}cdn_ip_list.nginx.conf`;
+    fs.writeFileSync(`${output}${path.sep}cdn_ip_list.nginx.conf`, nginxConf);
     console.log(`succeed | ${nginx}`);
     //
     return 0;
