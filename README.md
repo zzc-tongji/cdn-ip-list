@@ -1,4 +1,4 @@
-# CND IP List
+# CDN IP List
 
 ### About
 
