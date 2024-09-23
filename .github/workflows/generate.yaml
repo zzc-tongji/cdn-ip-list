@@ -17,6 +17,8 @@ jobs:
           node-version: 20
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Keep Alive
+        uses: gautamkrishnar/keepalive-workflow@v2
       - name: Cache Dependency
         id: cache
         uses: actions/cache@v4
